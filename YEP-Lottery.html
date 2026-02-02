@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year-End Party Lottery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff4444 0%, #ffcc00 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-height: 50rem;
+            max-width: 70rem;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #ff4444, #ffcc00);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .setup-section {
+            padding: 20px;
+            background: #fff9e6;
+            border-bottom: 3px solid #ffcc00;
+        }
+
+        .setup-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            padding: 10px 20px;
+            background: #ffcc00;
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            display: inline-block;
+            border: 2px solid #ff4444;
+        }
+
+        .file-input-label:hover {
+            transform: scale(1.05);
+            background: #ffd700;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-add {
+            background: #ff4444;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #666;
+            color: white;
+        }
+
+        .something-container {
+            display: flex;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .tet-scroll {
+            align-self: center;
+            background: linear-gradient(180deg, #8B0000 0%, #DC143C 50%, #8B0000 100%);
+            border-radius: 10px;
+            padding: 20px 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            height: 100%;
+        }
+
+        .tet-scroll::before,
+        .tet-scroll::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 20px;
+            background: linear-gradient(90deg, #DAA520, #FFD700, #DAA520);
+            border-radius: 10px;
+        }
+
+        .tet-scroll::before {
+            top: -10px;
+        }
+
+        .tet-scroll::after {
+            bottom: -10px;
+        }
+
+        .scroll-content {
+            background: #FFF9E6;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #8B0000;
+            font-size: 0.9em;
+            line-height: 1.6;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .scroll-text {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .logo-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 120px;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            color: #999;
+            font-size: 0.8em;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .panel {
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid;
+        }
+
+        .left-panel {
+            background: #fff5f5;
+            border: 3px solid #ff4444;
+            max-height: 20rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #prizeList {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+            /* space for scrollbar */
+        }
+
+        .left-panel h2 {
+            color: #ff4444;
+            border-color: #ff4444;
+        }
+
+        .middle-panel {
+            background: #fffef5;
+            border: 3px solid #ffcc00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-height: 20rem;
+        }
+
+        .middle-panel h2 {
+            color: #ffcc00;
+            border-color: #ffcc00;
+        }
+
+        .right-panel {
+            background: #fff5f5;
+            border: 3px solid #ff4444;
+            max-height: 20rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #winnersList {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+            /* space for scrollbar */
+        }
+
+        .right-panel h2 {
+            color: #ff4444;
+            border-color: #ff4444;
+        }
+
+        .prize-list {
+            list-style: none;
+        }
+
+        .prize-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-left: 5px solid #ff4444;
+            border-radius: 5px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .prize-item:hover:not(.drawn) {
+            transform: translateX(5px);
+        }
+
+        .prize-item.current {
+            background: #ffcc00;
+            transform: scale(1.05);
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.5);
+        }
+
+        .prize-item.drawn {
+            opacity: 0.5;
+            background: #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        .rolling-name {
+            font-size: 3em;
+            color: #ff4444;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .draw-btn {
+            background: linear-gradient(135deg, #ff4444, #ffcc00);
+            color: white;
+            font-size: 1.5em;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 68, 68, 0.4);
+            transition: all 0.3s;
+        }
+
+        .draw-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.6);
+        }
+
+        .draw-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .winner-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .winner-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff4444;
+            margin-bottom: 5px;
+        }
+
+        .winner-prize {
+            color: #666;
+            font-style: italic;
+        }
+
+        .undo-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            float: right;
+        }
+
+        .undo-btn:hover {
+            background: #cc0000;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .current-prize-display {
+            text-align: center;
+            font-size: 1.2em;
+            color: #ff4444;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px dashed #ffcc00;
+        }
+
+        /* Fireworks */
+        .firework {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Action buttons after rolling */
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-buttons.show {
+            display: flex;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #00cc00, #00ff00);
+            color: white;
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 204, 0, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 204, 0, 0.6);
+        }
+
+        .btn-reroll {
+            background: linear-gradient(135deg, #ff8800, #ffaa00);
+            color: white;
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 136, 0, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-reroll:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 136, 0, 0.6);
+        }
+
+        .cau-doi-img {
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body class="something-container">
+    <div class="tet-scroll">
+        <div class="logo-container">
+            <img id="leftLogo" src="./t_marriott-international8765.logowik.com.webp" alt="Logo">
+        </div>
+        <div class="cau-doi-container">
+            <img class="cau-doi-img" id="leftLogo" src="./left.png" alt="Logo">
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Lucky Draw 🎊</h1>
+        </div>
+
+        <div class="setup-section">
+            <div class="setup-row">
+                <div class="input-group">
+                    <label>Add Prize:</label>
+                    <input type="text" id="prizeInput" placeholder="Enter prize name">
+                </div>
+                <button class="btn btn-add" onclick="addPrize()">Add Prize</button>
+                <div class="file-input-wrapper">
+                    <input type="file" id="prizeFile" accept=".txt,.csv" onchange="importPrizes(event)">
+                    <label for="prizeFile" class="file-input-label">📁 Import Prizes</label>
+                </div>
+            </div>
+            <div class="setup-row">
+                <div class="input-group">
+                    <label>Add Participant:</label>
+                    <input type="text" id="participantInput" placeholder="Enter participant name">
+                </div>
+                <button class="btn btn-add" onclick="addParticipant()">Add Participant</button>
+                <div class="file-input-wrapper">
+                    <input type="file" id="participantFile" accept=".txt,.csv" onchange="importParticipants(event)">
+                    <label for="participantFile" class="file-input-label">📁 Import Participants</label>
+                </div>
+            </div>
+            <div class="setup-row">
+                <button class="btn btn-reset" onclick="resetAll()">Reset All</button>
+                <button class="btn btn-add" onclick="exportWinners()">
+                    📤 Export
+                </button>
+                <small style="color: #666; font-style: italic;">Import files: One name per line (TXT) or comma-separated
+                    (CSV)</small>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="main-content">
+                <!-- Left Panel: Prizes -->
+                <div class="panel left-panel">
+                    <h2>🎁 Prizes</h2>
+                    <ul id="prizeList" class="prize-list"></ul>
+                    <div id="noPrizes" class="empty-message">No prizes added yet</div>
+                </div>
+
+                <!-- Middle Panel: Drawing -->
+                <div class="panel middle-panel">
+                    <div class="current-prize-display" id="currentPrizeDisplay">
+                        Select a prize to start!
+                    </div>
+                    <div class="rolling-name" id="rollingName">Ready!</div>
+                    <button class="draw-btn" id="drawBtn" onclick="toggleDraw()" disabled>
+                        🎲 DRAW WINNER
+                    </button>
+                    <div class="action-buttons" id="actionButtons">
+                        <button class="btn-confirm" onclick="confirmWinner()">✅ Confirm</button>
+                        <button class="btn-reroll" onclick="reroll()">🔄 Reroll</button>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Winners -->
+                <div class="panel right-panel">
+                    <h2>
+                        🏆 Winners
+
+                    </h2>
+                    <div id="winnersList"></div>
+                    <div id="noWinners" class="empty-message">No winners yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tet-scroll">
+        <div class="logo-container">
+            <img id="leftLogo" src="/144911212_add326d5fbcb399560da.jpg" alt="Logo">
+        </div>
+        <div class="cau-doi-container">
+            <img class="cau-doi-img" id="cau-doi" src="./right.png" alt="Logo">
+        </div>
+    </div>
+
+    <script>
+        let prizes = [];
+        let participants = [];
+        let winners = [];
+        let currentPrizeIndex = -1;
+        let isRolling = false;
+        let rollingInterval = null;
+        let currentWinner = null;
+
+        function addPrize() {
+            const input = document.getElementById('prizeInput');
+            const prizeName = input.value.trim();
+
+            if (prizeName) {
+                prizes.push({ name: prizeName, drawn: false });
+                input.value = '';
+                updatePrizeList();
+                updateDrawButton();
+            }
+        }
+
+        function addParticipant() {
+            const input = document.getElementById('participantInput');
+            const participantName = input.value.trim();
+
+            if (participantName) {
+                participants.push(participantName);
+                input.value = '';
+                updateDrawButton();
+            }
+        }
+        function exportWinners() {
+            if (winners.length === 0) {
+                alert('No winners to export!');
+                return;
+            }
+
+            // CSV header
+            let csvContent = 'Winner,Prize\n';
+
+            winners.forEach(w => {
+                const winner = `"${w.participant.replace(/"/g, '""')}"`;
+                const prize = `"${w.prize.replace(/"/g, '""')}"`;
+                csvContent += `${winner},${prize}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `lucky_draw_winners_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function importPrizes(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const content = e.target.result;
+                const items = parseImportFile(content);
+
+                items.forEach(item => {
+                    if (item && !prizes.some(p => p.name === item)) {
+                        prizes.push({ name: item, drawn: false });
+                    }
+                });
+
+                updatePrizeList();
+                updateDrawButton();
+                alert(`Imported ${items.length} prize(s)!`);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function importParticipants(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const content = e.target.result;
+                const items = parseImportFile(content);
+
+                items.forEach(item => {
+                    if (item && !participants.includes(item)) {
+                        participants.push(item);
+                    }
+                });
+
+                updateDrawButton();
+                alert(`Imported ${items.length} participant(s)!`);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function parseImportFile(content) {
+            let items = [];
+
+            if (content.includes(',')) {
+                items = content.split(',').map(item => item.trim());
+            } else {
+                items = content.split(/\r?\n/).map(item => item.trim());
+            }
+
+            return items.filter(item => item.length > 0);
+        }
+
+        function updatePrizeList() {
+            const list = document.getElementById('prizeList');
+            const noPrizes = document.getElementById('noPrizes');
+
+            if (prizes.length === 0) {
+                list.style.display = 'none';
+                noPrizes.style.display = 'block';
+                return;
+            }
+
+            list.style.display = 'block';
+            noPrizes.style.display = 'none';
+            list.innerHTML = '';
+
+            prizes.forEach((prize, index) => {
+                const li = document.createElement('li');
+                li.className = 'prize-item';
+                if (index === currentPrizeIndex) {
+                    li.className += ' current';
+                }
+                if (prize.drawn) {
+                    li.className += ' drawn';
+                }
+                li.textContent = prize.name;
+                li.onclick = () => selectPrize(index);
+                list.appendChild(li);
+            });
+        }
+
+        function selectPrize(index) {
+            if (prizes[index].drawn || isRolling) return;
+
+            currentPrizeIndex = index;
+            updatePrizeList();
+            updateCurrentPrizeDisplay();
+            updateDrawButton();
+        }
+
+        function updateCurrentPrizeDisplay() {
+            const display = document.getElementById('currentPrizeDisplay');
+            if (currentPrizeIndex >= 0) {
+                display.textContent = `Current Prize: ${prizes[currentPrizeIndex].name}`;
+            } else {
+                display.textContent = 'Select a prize to start!';
+            }
+        }
+
+        function updateDrawButton() {
+            const btn = document.getElementById('drawBtn');
+            const availableParticipants = participants.filter(p =>
+                !winners.some(w => w.participant === p)
+            );
+
+            btn.disabled = currentPrizeIndex < 0 ||
+                prizes[currentPrizeIndex].drawn ||
+                availableParticipants.length === 0;
+        }
+
+        function toggleDraw() {
+            startRolling();
+        }
+
+        function startRolling() {
+            isRolling = true;
+
+            const availableParticipants = participants.filter(p =>
+                !winners.some(w => w.participant === p)
+            );
+
+            document.getElementById('drawBtn').textContent = '🎲 Rolling...';
+            document.getElementById('drawBtn').disabled = true;
+
+            rollingInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * availableParticipants.length);
+                document.getElementById('rollingName').textContent = availableParticipants[randomIndex];
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(rollingInterval);
+                stopRolling();
+            }, 5000);
+        }
+
+        function stopRolling() {
+            isRolling = false;
+            document.getElementById('drawBtn').style.display = 'none';
+
+            const availableParticipants = participants.filter(p =>
+                !winners.some(w => w.participant === p)
+            );
+
+            const winnerIndex = Math.floor(Math.random() * availableParticipants.length);
+            const winner = availableParticipants[winnerIndex];
+
+            document.getElementById('rollingName').textContent = winner;
+
+            currentWinner = {
+                participant: winner,
+                prize: prizes[currentPrizeIndex].name,
+                prizeIndex: currentPrizeIndex
+            };
+
+            document.getElementById('actionButtons').classList.add('show');
+            launchFireworks();
+        }
+
+        function launchFireworks() {
+            const colors = ['#ff0000', '#ffd700', '#ff69b4', '#00ff00', '#00bfff', '#ff6347'];
+            const fireworksCount = 30;
+
+            for (let i = 0; i < fireworksCount; i++) {
+                setTimeout(() => {
+                    createFirework(colors[Math.floor(Math.random() * colors.length)]);
+                }, i * 100);
+            }
+        }
+
+        function createFirework(color) {
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight;
+            const endX = startX + (Math.random() - 0.5) * 200;
+            const endY = Math.random() * (window.innerHeight / 2);
+
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = startX + 'px';
+            firework.style.top = startY + 'px';
+            firework.style.background = color;
+            document.body.appendChild(firework);
+
+            const duration = 800;
+            const startTime = Date.now();
+
+            const animateUp = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = elapsed / duration;
+
+                if (progress < 1) {
+                    firework.style.left = startX + (endX - startX) * progress + 'px';
+                    firework.style.top = startY - (startY - endY) * progress + 'px';
+                    requestAnimationFrame(animateUp);
+                } else {
+                    explode(endX, endY, color);
+                    firework.remove();
+                }
+            };
+
+            animateUp();
+        }
+
+        function explode(x, y, color) {
+            const particles = 15;
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.background = color;
+                document.body.appendChild(particle);
+
+                const angle = (Math.PI * 2 * i) / particles;
+                const velocity = 2 + Math.random() * 2;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+
+                animateParticle(particle, x, y, vx, vy);
+            }
+        }
+
+        function animateParticle(particle, startX, startY, vx, vy) {
+            let x = startX;
+            let y = startY;
+            let opacity = 1;
+            const gravity = 0.1;
+            let currentVy = vy;
+
+            const animate = () => {
+                x += vx;
+                y += currentVy;
+                currentVy += gravity;
+                opacity -= 0.02;
+
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.opacity = opacity;
+
+                if (opacity > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            };
+
+            animate();
+        }
+
+        function confirmWinner() {
+            if (!currentWinner) return;
+
+            // prizes[currentWinner.prizeIndex].drawn = true;
+            winners.push({
+                participant: currentWinner.participant,
+                prize: currentWinner.prize,
+                timestamp: Date.now()
+            });
+
+            resetDrawState();
+        }
+
+        function reroll() {
+            currentWinner = null;
+            document.getElementById('actionButtons').classList.remove('show');
+            document.getElementById('drawBtn').style.display = 'block';
+            document.getElementById('drawBtn').textContent = '🎲 DRAW WINNER';
+            startRolling();
+        }
+
+        function resetDrawState() {
+            currentWinner = null;
+            currentPrizeIndex = -1;
+            document.getElementById('actionButtons').classList.remove('show');
+            document.getElementById('drawBtn').style.display = 'block';
+            document.getElementById('drawBtn').textContent = '🎲 DRAW WINNER';
+            document.getElementById('rollingName').textContent = 'Ready!';
+
+            updatePrizeList();
+            updateWinnersList();
+            updateCurrentPrizeDisplay();
+            updateDrawButton();
+        }
+
+        function updateWinnersList() {
+            const list = document.getElementById('winnersList');
+            const noWinners = document.getElementById('noWinners');
+
+            if (winners.length === 0) {
+                list.style.display = 'none';
+                noWinners.style.display = 'block';
+                return;
+            }
+
+            list.style.display = 'block';
+            noWinners.style.display = 'none';
+            list.innerHTML = '';
+
+            winners.slice().reverse().forEach((winner, index) => {
+                const card = document.createElement('div');
+                card.className = 'winner-card';
+                card.innerHTML = `
+                    <div class="winner-name">👤 ${winner.participant}</div>
+                    <div class="winner-prize">🎁 ${winner.prize}</div>
+                    <button class="undo-btn" onclick="undoLastWinner(${winners.length - 1 - index})">Undo</button>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function undoLastWinner(index) {
+            if (isRolling) return;
+
+            const winner = winners[index];
+            const prizeIndex = prizes.findIndex(p => p.name === winner.prize);
+
+            // if (prizeIndex >= 0) {
+            //     prizes[prizeIndex].drawn = false;
+            // }
+
+            winners.splice(index, 1);
+
+            updatePrizeList();
+            updateWinnersList();
+            updateDrawButton();
+            document.getElementById('rollingName').textContent = 'Ready!';
+        }
+
+        function resetAll() {
+            if (confirm('Are you sure you want to reset everything?')) {
+                prizes = [];
+                participants = [];
+                winners = [];
+                currentPrizeIndex = -1;
+                isRolling = false;
+                currentWinner = null;
+
+                if (rollingInterval) {
+                    clearInterval(rollingInterval);
+                }
+
+                document.getElementById('actionButtons').classList.remove('show');
+                document.getElementById('drawBtn').style.display = 'block';
+                updatePrizeList();
+                updateWinnersList();
+                updateCurrentPrizeDisplay();
+                updateDrawButton();
+                document.getElementById('rollingName').textContent = 'Ready!';
+                document.getElementById('drawBtn').textContent = '🎲 DRAW WINNER';
+            }
+        }
+
+        document.getElementById('prizeInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addPrize();
+        });
+
+        document.getElementById('participantInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addParticipant();
+        });
+
+        updatePrizeList();
+        updateWinnersList();
+        updateCurrentPrizeDisplay();
+    </script>
+</body>
+
+</html>
