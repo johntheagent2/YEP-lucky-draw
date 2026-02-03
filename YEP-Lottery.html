@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-height: 50rem;
+            max-height: 60rem;
             max-width: 70rem;
             margin: 0 auto;
             background: white;
@@ -228,7 +228,7 @@
         .left-panel {
             background: #fff5f5;
             border: 3px solid #ff4444;
-            max-height: 20rem;
+            max-height: 30rem;
             display: flex;
             flex-direction: column;
         }
@@ -252,7 +252,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            max-height: 20rem;
+            max-height: 30rem;
         }
 
         .middle-panel h2 {
@@ -263,7 +263,7 @@
         .right-panel {
             background: #fff5f5;
             border: 3px solid #ff4444;
-            max-height: 20rem;
+            max-height: 30rem;
             display: flex;
             flex-direction: column;
         }
@@ -664,11 +664,7 @@
         function parseImportFile(content) {
             let items = [];
 
-            if (content.includes(',')) {
-                items = content.split(',').map(item => item.trim());
-            } else {
-                items = content.split(/\r?\n/).map(item => item.trim());
-            }
+            items = content.split(/\r?\n/).map(item => item.trim());
 
             return items.filter(item => item.length > 0);
         }
