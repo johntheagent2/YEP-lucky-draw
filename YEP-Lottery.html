@@ -466,7 +466,7 @@
 <body class="something-container">
     <div class="tet-scroll">
         <div class="logo-container">
-            <img id="leftLogo" src="./t_marriott-international8765.logowik.com.webp" alt="Logo">
+            <img id="leftLogo" src="mariot_left.webp" alt="Logo">
         </div>
         <div class="cau-doi-container">
             <img class="cau-doi-img" id="leftLogo" src="./left.png" alt="Logo">
@@ -549,7 +549,7 @@
 
     <div class="tet-scroll">
         <div class="logo-container">
-            <img id="leftLogo" src="/144911212_add326d5fbcb399560da.jpg" alt="Logo">
+            <img id="leftLogo" src="mariot_right.jpg" alt="Logo">
         </div>
         <div class="cau-doi-container">
             <img class="cau-doi-img" id="cau-doi" src="./right.png" alt="Logo">
@@ -593,8 +593,8 @@
                 return;
             }
 
-            // CSV header
-            let csvContent = 'Winner,Prize\n';
+            // UTF-8 BOM for Excel compatibility
+            let csvContent = '\uFEFFWinner,Prize\n';
 
             winners.forEach(w => {
                 const winner = `"${w.participant.replace(/"/g, '""')}"`;
@@ -602,17 +602,21 @@
                 csvContent += `${winner},${prize}\n`;
             });
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([csvContent], {
+                type: 'text/csv;charset=utf-8;'
+            });
 
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.download = `lucky_draw_winners_${new Date().toISOString().slice(0, 10)}.csv`;
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
         }
+
 
         function importPrizes(event) {
             const file = event.target.files[0];
@@ -624,9 +628,7 @@
                 const items = parseImportFile(content);
 
                 items.forEach(item => {
-                    if (item && !prizes.some(p => p.name === item)) {
-                        prizes.push({ name: item, drawn: false });
-                    }
+                    prizes.push({ name: item, drawn: false });
                 });
 
                 updatePrizeList();
@@ -634,7 +636,7 @@
                 alert(`Imported ${items.length} prize(s)!`);
                 event.target.value = '';
             };
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8');
         }
 
         function importParticipants(event) {
@@ -870,15 +872,20 @@
         function confirmWinner() {
             if (!currentWinner) return;
 
-            // prizes[currentWinner.prizeIndex].drawn = true;
+            // 1️⃣ Save winner
             winners.push({
                 participant: currentWinner.participant,
                 prize: currentWinner.prize,
                 timestamp: Date.now()
             });
 
+            // 2️⃣ REMOVE prize from prize list
+            prizes.splice(currentWinner.prizeIndex, 1);
+
+            // 3️⃣ Reset UI state
             resetDrawState();
         }
+
 
         function reroll() {
             currentWinner = null;
